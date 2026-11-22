@@ -28,10 +28,10 @@ jobs:
         run: |
           if [ -z "$IG_TOKEN" ]; then echo "::notice::Segredo IG_TOKEN ainda nao configurado - nada a fazer"; echo "ok=false" >> $GITHUB_OUTPUT; else echo "ok=true" >> $GITHUB_OUTPUT; fi
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         if: steps.cfg.outputs.ok == 'true'
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         if: steps.cfg.outputs.ok == 'true'
         with:
           python-version: "3.12"

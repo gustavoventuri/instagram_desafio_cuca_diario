@@ -19,6 +19,12 @@ import time
 
 import requests
 
+def falha(msg):
+    """Mostra o erro como anotacao no resumo do GitHub Actions e encerra."""
+    print(f"::error::{msg}")
+    sys.exit(msg)
+
+
 RAIZ = os.path.dirname(os.path.abspath(__file__))
 ESTADO = os.path.join(RAIZ, "estado.json")
 MIDIA = os.path.join(RAIZ, "docs", "media")
@@ -39,7 +45,7 @@ def salva_estado(e):
 def token():
     t = os.environ.get("IG_TOKEN", "").strip()
     if not t:
-        sys.exit("IG_TOKEN nao definido")
+        falha("IG_TOKEN nao definido")
     return t
 
 
@@ -49,7 +55,7 @@ def chama(metodo, caminho, **params):
                          data=params if metodo != "GET" else None, timeout=120)
     if r.status_code >= 400:
         # nunca imprime o token
-        sys.exit(f"Erro da API ({r.status_code}) em {caminho}: {r.text[:800]}")
+        falha(f"Erro da API ({r.status_code}) em {caminho}: {r.text[:800]}")
     return r.json()
 
 
@@ -90,7 +96,7 @@ def espera_url(url, limite=900):
             pass
         print(f"aguardando arquivo ficar publico: {url}")
         time.sleep(20)
-    sys.exit(f"arquivo nao ficou acessivel a tempo: {url}")
+    falha(f"arquivo nao ficou acessivel a tempo: {url}")
 
 
 def espera_container(cid, limite=600):
@@ -100,15 +106,15 @@ def espera_container(cid, limite=600):
         if st == "FINISHED":
             return
         if st in ("ERROR", "EXPIRED"):
-            sys.exit(f"container {cid} falhou: {st}")
+            falha(f"container {cid} falhou: {st}")
         time.sleep(15)
-    sys.exit(f"container {cid} nao terminou de processar a tempo")
+    falha(f"container {cid} nao terminou de processar a tempo")
 
 
 def publicar():
     base = os.environ.get("MEDIA_BASE_URL", "").rstrip("/")
     if not base:
-        sys.exit("MEDIA_BASE_URL nao definido")
+        falha("MEDIA_BASE_URL nao definido")
     e = carrega_estado()
     num = e["proximo"]
     pasta = os.path.join(MIDIA, f"{num:03d}")
@@ -150,7 +156,7 @@ def renovar_token():
     r = requests.get(f"{API}/refresh_access_token",
                      params={"grant_type": "ig_refresh_token", "access_token": token()}, timeout=60)
     if r.status_code >= 400:
-        sys.exit(f"falha ao renovar token ({r.status_code}): {r.text[:500]}")
+        falha(f"falha ao renovar token ({r.status_code}): {r.text[:500]}")
     novo = r.json()["access_token"]
     dias = r.json().get("expires_in", 0) // 86400
     saida = os.environ.get("GITHUB_OUTPUT")
