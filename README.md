@@ -26,3 +26,20 @@ Gera e publica 1 desafio por dia no Instagram (18:47, horário de Brasília) usa
 - Para publicar agora: *Actions → Publicar desafio do dia → Run workflow*.
 - Para pausar: *Actions → Publicar desafio do dia → ⋯ → Disable workflow*.
 - Para mudar o horário: edite o `cron` em `publicar.yml`. O horário é em UTC (Brasília = UTC−3).
+
+## Respostas automáticas aos comentários (no celular, com o Fly)
+
+Ficam na pasta `celular/` e rodam no Termux do celular servidor, usando o Fly (Llama 3.2 1B local):
+
+- **Agenda:** a cada 10 minutos na 1ª hora depois do post, e 1 vez por hora até a 7ª hora.
+- **Respostas neutras:** agradecem, incentivam e convidam a seguir. Nunca dizem se a pessoa acertou.
+- **Filtros:** spam, links, ofensas e política são ignorados. Se o Fly gerar algo estranho, o robô usa uma frase pronta.
+
+Instalação no Termux:
+```
+curl -fsSL https://raw.githubusercontent.com/gustavoventuri/instagram_desafio_cuca_diario/main/celular/instalar.sh | bash
+nano ~/quebracuca/.env            # IG_TOKEN (precisa da permissão instagram_manage_comments)
+cd ~/quebracuca && node responder.js --agora   # teste
+tmux new-session -d -s quebracuca ~/quebracuca/laco.sh
+```
+O log fica em `~/quebracuca/respostas.log`.
