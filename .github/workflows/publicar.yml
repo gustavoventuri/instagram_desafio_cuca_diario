@@ -24,6 +24,7 @@ jobs:
         id: cfg
         env:
           IG_TOKEN: ${{ secrets.IG_TOKEN }}
+          IG_USER_ID: ${{ vars.IG_USER_ID }}
         run: |
           if [ -z "$IG_TOKEN" ]; then echo "::notice::Segredo IG_TOKEN ainda nao configurado - nada a fazer"; echo "ok=false" >> $GITHUB_OUTPUT; else echo "ok=true" >> $GITHUB_OUTPUT; fi
 
@@ -68,6 +69,7 @@ jobs:
         if: steps.cfg.outputs.ok == 'true'
         env:
           IG_TOKEN: ${{ secrets.IG_TOKEN }}
+          IG_USER_ID: ${{ vars.IG_USER_ID }}
           MEDIA_BASE_URL: ${{ vars.MEDIA_BASE_URL || format('https://{0}.github.io/{1}', github.repository_owner, github.event.repository.name) }}
         run: python publicar.py publicar
 

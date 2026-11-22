@@ -1,8 +1,6 @@
 name: Renovar token do Instagram
 
 on:
-  schedule:
-    - cron: "13 12 * * 1"   # toda segunda-feira
   workflow_dispatch: {}
 
 jobs:
@@ -18,6 +16,7 @@ jobs:
         id: renovar
         env:
           IG_TOKEN: ${{ secrets.IG_TOKEN }}
+          IG_USER_ID: ${{ vars.IG_USER_ID }}
         run: python publicar.py renovar_token
       - name: Gravar o novo token no segredo IG_TOKEN
         env:

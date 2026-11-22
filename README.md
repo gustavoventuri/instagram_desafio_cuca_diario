@@ -12,12 +12,13 @@ Gera e publica 1 desafio por dia no Instagram (18:47, horário de Brasília) usa
 1. **O repositório precisa ser público** para usar o GitHub Pages grátis, porque o Instagram baixa as mídias de uma URL pública. Não há segredos no código.
    *Settings → General → Change visibility → Public*
 2. **GitHub Pages**: *Settings → Pages → Source: **GitHub Actions***.
-3. **App na Meta** (developers.facebook.com):
-   - Crie um app do tipo **Empresa/Business** e adicione o produto **Instagram**. Escolha *API setup with Instagram business login*.
-   - Em *Generate access tokens*, adicione a conta **quebra.cuca.diario** e gere o token. Ele precisa das permissões `instagram_business_basic` e `instagram_business_content_publish`.
-4. **Segredos do repositório** (*Settings → Secrets and variables → Actions → New repository secret*):
-   - `IG_TOKEN`: o token gerado no passo 3.
-   - `GH_PAT` (opcional, recomendado): um *fine-grained token* do GitHub com acesso só a este repositório e permissão **Secrets: Read and write**. Com ele, o token do Instagram é renovado sozinho toda semana. Sem ele, o token expira em 60 dias.
+3. **Token (usuário do sistema, não expira)**: em business.facebook.com → *Configurações* → *Usuários do sistema*:
+   - Crie o usuário `quebra-cuca-bot` como Admin.
+   - Em *Atribuir ativos*, dê a ele o **app** e o perfil do Instagram **@quebra.cuca.diario**, com controle total.
+   - Clique em *Gerar token*, escolha o app, defina a expiração como **Nunca** e marque as permissões `instagram_basic` e `instagram_content_publish`.
+4. **No GitHub** (*Settings → Secrets and variables → Actions*):
+   - Na aba *Secrets*, crie `IG_TOKEN` com o token do passo 3.
+   - Na aba *Variables*, crie `IG_USER_ID` com o ID do @quebra.cuca.diario. O ID aparece em business.facebook.com → *Configurações* → *Contas do Instagram*.
 5. Em *Actions*, rode **Testar conexão com o Instagram**. Se aparecer "token ok - conta @quebra.cuca.diario", está tudo pronto.
 
 ## Uso no dia a dia

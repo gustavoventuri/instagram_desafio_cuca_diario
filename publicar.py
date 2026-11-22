@@ -7,7 +7,9 @@ Comandos:
   python publicar.py testar          -> confere token e conta, sem publicar nada
 
 Variaveis de ambiente:
-  IG_TOKEN        token de acesso do Instagram (API com login do Instagram)
+  IG_TOKEN        token de acesso
+  IG_USER_ID      ID da conta do Instagram. Se definido, usa graph.facebook.com (token de usuario
+                  do sistema do login unificado, que nao expira). Sem ele, usa graph.instagram.com.
   MEDIA_BASE_URL  URL publica onde a pasta docs/ fica acessivel (ex.: GitHub Pages)
 """
 import json
@@ -20,7 +22,8 @@ import requests
 RAIZ = os.path.dirname(os.path.abspath(__file__))
 ESTADO = os.path.join(RAIZ, "estado.json")
 MIDIA = os.path.join(RAIZ, "docs", "media")
-API = "https://graph.instagram.com"
+IG_USER_ID = os.environ.get("IG_USER_ID", "").strip()
+API = "https://graph.facebook.com/v25.0" if IG_USER_ID else "https://graph.instagram.com"
 
 
 def carrega_estado():
@@ -51,6 +54,9 @@ def chama(metodo, caminho, **params):
 
 
 def conta():
+    if IG_USER_ID:
+        c = chama("GET", IG_USER_ID, fields="id,username")
+        return {"user_id": c["id"], "username": c.get("username")}
     return chama("GET", "me", fields="user_id,username")
 
 
@@ -138,6 +144,9 @@ def publicar():
 
 # ---------------------------------------------------------------- token
 def renovar_token():
+    if IG_USER_ID:
+        print("token de usuario do sistema nao expira - nada a renovar")
+        return
     r = requests.get(f"{API}/refresh_access_token",
                      params={"grant_type": "ig_refresh_token", "access_token": token()}, timeout=60)
     if r.status_code >= 400:
