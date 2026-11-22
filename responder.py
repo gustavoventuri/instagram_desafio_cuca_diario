@@ -139,4 +139,12 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except SystemExit as erro:
+        if erro.code not in (0, None):
+            log(f"ERRO: {erro.code}")
+        raise
+    except Exception as erro:  # registra qualquer falha no log lido pelo Claude
+        log(f"ERRO: {type(erro).__name__}: {str(erro)[:500]}")
+        raise
