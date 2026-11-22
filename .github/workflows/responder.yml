@@ -1,0 +1,50 @@
+name: Responder comentarios
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"   # o script decide: 1a hora a cada 10 min, depois 1x por hora ate 7h
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: responder
+  cancel-in-progress: false
+
+jobs:
+  responder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar configuracao
+        id: cfg
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -z "$GEMINI_API_KEY" ]; then echo "::notice::GEMINI_API_KEY ainda nao configurado"; echo "ok=false" >> $GITHUB_OUTPUT; else echo "ok=true" >> $GITHUB_OUTPUT; fi
+      - uses: actions/checkout@v5
+        if: steps.cfg.outputs.ok == 'true'
+      - uses: actions/setup-python@v6
+        if: steps.cfg.outputs.ok == 'true'
+        with:
+          python-version: "3.12"
+      - if: steps.cfg.outputs.ok == 'true'
+        run: pip install -q requests
+      - name: Responder
+        if: steps.cfg.outputs.ok == 'true'
+        env:
+          IG_TOKEN: ${{ secrets.IG_TOKEN }}
+          IG_USER_ID: ${{ vars.IG_USER_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          EVENTO: ${{ github.event_name }}
+        run: python responder.py
+      - name: Salvar log
+        if: always() && steps.cfg.outputs.ok == 'true'
+        run: |
+          git config user.name "quebra-cuca-bot"
+          git config user.email "quebra-cuca-bot@users.noreply.github.com"
+          git add diagnostico/respostas.log 2>/dev/null || exit 0
+          git diff --cached --quiet && exit 0
+          git commit -m "Log de respostas"
+          for i in 1 2 3; do git pull --rebase -q && git push && break; sleep 5; done
