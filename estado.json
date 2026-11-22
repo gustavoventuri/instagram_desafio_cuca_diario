@@ -1,1 +1,19 @@
-{"proximo": 2, "publicados": [{"num": 1, "tipo": "reel", "quando": "2026-11-21T22:00:00-03:00", "via": "manual"}]}
+{
+  "proximo": 3,
+  "publicados": [
+    {
+      "num": 1,
+      "tipo": "reel",
+      "quando": "2026-11-21T22:00:00-03:00",
+      "via": "manual"
+    },
+    {
+      "num": 2,
+      "tipo": "reel",
+      "media_id": "17970490080208781",
+      "link": "https://www.instagram.com/reel/DgD06vtGX3H/",
+      "quando": "2026-11-22T22:00:06Z",
+      "via": "api"
+    }
+  ]
+}
