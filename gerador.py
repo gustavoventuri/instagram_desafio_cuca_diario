@@ -139,20 +139,29 @@ def linha_equacao(d, y, termos, resultado, s=110, f=None):
 
 
 def gera_formas(rng):
+    """4 incognitas: circulo=a, quadrado=b, triangulo=c, estrela=d.
+    A ultima linha mistura soma, multiplicacao e subtracao (pegadinha da ordem das operacoes)."""
     while True:
-        a, b, c = rng.sample(range(2, 13), 3)  # circulo, quadrado, triangulo
-        # pergunta: C + Q × T  (ordem das operacoes)
-        resp = a + b * c
-        errado = (a + b) * c
-        if resp != errado:
+        a = rng.randint(3, 9); b = rng.randint(2, 9); c = rng.randint(2, 6); d = rng.randint(2, 9)
+        if len({a, b, c, d}) < 4:
+            continue
+        resp = d + b * c - a
+        errado = (d + b) * c - a
+        if resp > 0 and resp != errado:
             break
     eqs = [
         (["circulo", "+", "circulo", "+", "circulo"], 3 * a),
-        (["circulo", "+", "quadrado", "+", "quadrado"], a + 2 * b),
-        (["quadrado", "+", "triangulo", "+", "triangulo"], b + 2 * c),
+        (["circulo", "×", "quadrado", "−", "quadrado"], a * b - b),
+        (["quadrado", "+", "triangulo", "×", "triangulo"], b + c * c),
+        (["estrela", "×", "triangulo", "+", "circulo"], d * c + a),
     ]
-    pergunta = ["circulo", "+", "quadrado", "×", "triangulo"]
-    return dict(a=a, b=b, c=c, eqs=eqs, pergunta=pergunta, resposta=resp, errado=errado)
+    pergunta = ["estrela", "+", "quadrado", "×", "triangulo", "−", "circulo"]
+    return dict(a=a, b=b, c=c, d=d, eqs=eqs, pergunta=pergunta, resposta=resp, errado=errado)
+
+
+def avalia(termos, v):
+    expr = "".join(str(v.get(t, t)) for t in termos).replace("×", "*").replace("−", "-")
+    return eval(expr)
 
 
 def carrossel_formas(dados, num, pasta):
@@ -161,45 +170,45 @@ def carrossel_formas(dados, num, pasta):
     # slide 1
     img = fundo(W, H)
     d = ImageDraw.Draw(img)
-    pilula(d, 540, 70, f"DESAFIO #{num:03d}", fonte("Black", 40))
-    texto_centro(d, 540, 175, "95% erra esse.", fonte("Black", 92))
-    texto_centro(d, 540, 290, "Quanto vale a última linha?", fonte("SemiBold", 48), (230, 222, 255))
-    d = cartao(img, (70, 400, 1010, 1130))
-    y = 500
+    pilula(d, 540, 60, f"DESAFIO #{num:03d}", fonte("Black", 40))
+    texto_centro(d, 540, 150, "Só 2% acertam.", fonte("Black", 92))
+    texto_centro(d, 540, 262, "Quanto vale a última linha?", fonte("SemiBold", 48), (230, 222, 255))
+    d = cartao(img, (50, 360, 1030, 1150))
+    y = 445
     for termos, res in dados["eqs"]:
-        linha_equacao(d, y, termos, res)
-        y += 160
-    d.line((140, y - 60, 940, y - 60), fill=(225, 220, 245), width=4)
-    linha_equacao(d, y + 20, dados["pergunta"], "?")
+        linha_equacao(d, y, termos, res, s=92, f=fonte("Black", 72))
+        y += 135
+    d.line((120, y - 55, 960, y - 55), fill=(225, 220, 245), width=4)
+    linha_equacao(d, y + 15, dados["pergunta"], "?", s=88, f=fonte("Black", 70))
     rodape(d, W, H, "arraste para a dica →")
     fotos.append(img)
     # slide 2 - dica
     img = fundo(W, H)
     d = ImageDraw.Draw(img)
     pilula(d, 540, 70, "DICA", fonte("Black", 40))
-    texto_centro(d, 540, 230, "Uma forma de cada vez:", fonte("Black", 70), max_w=960)
-    y = 470
-    for i, (nome, txt) in enumerate([("circulo", "1ª linha"), ("quadrado", "2ª linha"), ("triangulo", "3ª linha")]):
-        desenha_forma(d, nome, 330, y + 50, 100)
-        d.text((420, y + 50), f"→ use a {txt}", font=fonte("Bold", 56), fill=BRANCO, anchor="lm")
-        y += 170
-    texto_centro(d, 540, 1000, "E lembre: multiplicação vem antes da soma 😉".replace(" 😉", ""), fonte("SemiBold", 48), AMARELO, max_w=880)
+    texto_centro(d, 540, 200, "Descubra na ordem:", fonte("Black", 70), max_w=960)
+    y = 390
+    for nome, txt in [("circulo", "1ª linha"), ("quadrado", "2ª linha"), ("triangulo", "3ª linha"), ("estrela", "4ª linha")]:
+        desenha_forma(d, nome, 330, y + 50, 90)
+        d.text((420, y + 50), f"→ use a {txt}", font=fonte("Bold", 54), fill=BRANCO, anchor="lm")
+        y += 140
+    texto_centro(d, 540, 990, "Atenção: × vem antes de + e −", fonte("Bold", 50), AMARELO, max_w=900)
     rodape(d, W, H, "comente seu palpite antes de arrastar →")
     fotos.append(img)
     # slide 3 - resposta
     img = fundo(W, H)
     d = ImageDraw.Draw(img)
     pilula(d, 540, 70, "RESPOSTA", fonte("Black", 40))
-    d = cartao(img, (70, 190, 1010, 1060))
-    y = 280
-    for nome, v in [("circulo", dados["a"]), ("quadrado", dados["b"]), ("triangulo", dados["c"])]:
-        desenha_forma(d, nome, 380, y, 100)
-        d.text((460, y), f"= {v}", font=fonte("Black", 80), fill=TINTA, anchor="lm")
-        y += 140
-    a, b, c = dados["a"], dados["b"], dados["c"]
-    texto_centro(d, 540, 700, f"{a} + {b} × {c}", fonte("Black", 76), TINTA)
-    texto_centro(d, 540, 800, f"= {a} + {b*c} = {dados['resposta']}", fonte("Black", 76), (120, 60, 230))
-    texto_centro(d, 540, 925, f"Quem respondeu {dados['errado']} somou antes de multiplicar!", fonte("SemiBold", 42), (110, 100, 150), max_w=820)
+    d = cartao(img, (60, 180, 1020, 1090))
+    a, b, c, dd = dados["a"], dados["b"], dados["c"], dados["d"]
+    pos = [(300, 290), (700, 290), (300, 430), (700, 430)]
+    for (nome, v), (x, yy) in zip([("circulo", a), ("quadrado", b), ("triangulo", c), ("estrela", dd)], pos):
+        desenha_forma(d, nome, x - 60, yy, 90)
+        d.text((x, yy), f"= {v}", font=fonte("Black", 72), fill=TINTA, anchor="lm")
+    texto_centro(d, 540, 560, f"{dd} + {b} × {c} − {a}", fonte("Black", 74), TINTA)
+    texto_centro(d, 540, 660, f"= {dd} + {b*c} − {a} = {dados['resposta']}", fonte("Black", 74), (120, 60, 230))
+    texto_centro(d, 540, 800, f"Quem respondeu {dados['errado']} fez a conta da esquerda para a direita!",
+                 fonte("SemiBold", 42), (110, 100, 150), max_w=820)
     rodape(d, W, H, "Siga para 1 desafio novo por dia")
     fotos.append(img)
     nomes = []
@@ -212,67 +221,93 @@ def carrossel_formas(dados, num, pasta):
 
 # ---------------------------------------------------------------- sequencias
 def gera_sequencia(rng):
+    """Regras menos obvias. Cada item: (sequencia de 7 termos, dica, explicacao, nome)."""
     tipos = []
-    s = rng.randint(2, 9); r = rng.randint(3, 9)
-    tipos.append(([s + r * i for i in range(6)], f"Some {r} a cada passo.", "soma constante"))
-    s = rng.randint(1, 4)
-    tipos.append(([s * 2 ** i for i in range(6)], "Cada número é o dobro do anterior.", "dobro"))
-    s = rng.randint(1, 5); inc = rng.randint(1, 3)
-    seq = [s]
-    for i in range(5):
-        seq.append(seq[-1] + inc * (i + 1))
-    tipos.append((seq, f"A diferença aumenta: +{inc}, +{2*inc}, +{3*inc}, +{4*inc}...", "diferença crescente"))
-    k = rng.randint(1, 4)
-    tipos.append(([(i + k) ** 2 for i in range(6)], f"São quadrados: {k}², {k+1}², {k+2}²...", "quadrados"))
-    a, b = rng.randint(1, 3), rng.randint(2, 4)
-    seq = [a, b]
-    while len(seq) < 6:
-        seq.append(seq[-1] + seq[-2])
-    tipos.append((seq, "Cada número é a soma dos dois anteriores.", "fibonacci"))
-    x, y_ = rng.randint(3, 7), rng.randint(1, 3)
-    s = rng.randint(2, 6)
-    seq = [s]
-    for i in range(5):
-        seq.append(seq[-1] + x if i % 2 == 0 else seq[-1] - y_)
-    tipos.append((seq, f"Alterna: +{x}, −{y_}, +{x}, −{y_}...", "alternada"))
-    s = rng.randint(1, 3)
-    seq = [s]
-    for i in range(5):
-        seq.append(seq[-1] * 2 + 1)
-    tipos.append((seq, "Dobre e some 1.", "dobro mais um"))
+    # 1) duas sequencias intercaladas: posicoes impares +k, pares x2
+    k = rng.randint(3, 7); x0 = rng.randint(1, 5); y0 = rng.randint(2, 4)
+    seq = []
+    xi, yi = x0, y0
+    for i in range(7):
+        if i % 2 == 0:
+            seq.append(xi); xi += k
+        else:
+            seq.append(yi); yi *= 2
+    tipos.append((seq, "Olhe os números pulando um.", f"São duas sequências intercaladas: {x0}, {x0+k}, {x0+2*k}... (+{k}) e {y0}, {2*y0}, {4*y0}... (×2).", "intercalada"))
+    # 2) alterna x2 e -k
+    k = rng.randint(1, 5); s0 = rng.randint(2, 6)
+    seq = [s0]
+    for i in range(6):
+        seq.append(seq[-1] * 2 if i % 2 == 0 else seq[-1] - k)
+    tipos.append((seq, "São duas operações que se revezam.", f"Alterna: ×2, −{k}, ×2, −{k}...", "alterna x2 e menos"))
+    # 3) n² + n (ou n² − n)
+    off = rng.randint(1, 4); sinal = rng.choice([1, -1])
+    seq = [(i + off) ** 2 + sinal * (i + off) for i in range(7)]
+    tipos.append((seq, "Pense em quadrados perfeitos.", f"É n² {'+' if sinal > 0 else '−'} n: começando em n = {off}.", "quadrado mais n"))
+    # 4) cada termo = anterior x2 - posicao
+    s0 = rng.randint(3, 6)
+    seq = [s0]
+    for i in range(2, 8):
+        seq.append(seq[-1] * 2 - i)
+    tipos.append((seq, "Dobre e depois tire algo que cresce.", "Cada número = anterior × 2 − (posição dele): ×2−2, ×2−3, ×2−4...", "dobro menos posicao"))
+    # 5) soma dos dois anteriores + 1
+    a0, b0 = rng.randint(1, 3), rng.randint(2, 4)
+    seq = [a0, b0]
+    while len(seq) < 7:
+        seq.append(seq[-1] + seq[-2] + 1)
+    tipos.append((seq, "Olhe para os dois anteriores.", "Cada número = soma dos dois anteriores + 1.", "fibonacci mais um"))
+    # 6) soma os digitos ao proprio numero
+    s0 = rng.randint(11, 29)
+    seq = [s0]
+    while len(seq) < 7:
+        seq.append(seq[-1] + sum(int(c) for c in str(seq[-1])))
+    tipos.append((seq, "Olhe os algarismos de cada número.", "Cada número = anterior + a soma dos algarismos dele (ex.: 23 → 23 + 2 + 3).", "soma dos digitos"))
+    # 7) diferencas crescem de 2 em 2 a partir de um impar / segunda ordem
+    s0 = rng.randint(2, 9); d0 = rng.randint(1, 4); dd = rng.randint(2, 3)
+    seq = [s0]; dif = d0
+    for _ in range(6):
+        seq.append(seq[-1] + dif); dif += dd
+    tipos.append((seq, "Calcule a diferença entre vizinhos.", f"As diferenças são {d0}, {d0+dd}, {d0+2*dd}... (aumentam de {dd} em {dd}).", "segunda ordem"))
     return tipos
 
 
-def carrossel_sequencia(seq, regra, num, pasta):
+def carrossel_sequencia(seq, dica, regra, num, pasta):
     W, H = 1080, 1350
-    mostrados, resp = seq[:5], seq[5]
+    mostrados, resp = seq[:6], seq[6]
     fotos = []
     # slide 1
     img = fundo(W, H)
     d = ImageDraw.Draw(img)
     pilula(d, 540, 70, f"DESAFIO #{num:03d}", fonte("Black", 40))
-    texto_centro(d, 540, 175, "Qual é o próximo número?", fonte("Black", 84), max_w=940)
-    d = cartao(img, (70, 430, 1010, 930))
+    texto_centro(d, 540, 165, "Só 3% acertam o próximo.", fonte("Black", 80), max_w=960)
+    d = cartao(img, (50, 430, 1030, 930))
     txt = "  ".join(str(n) for n in mostrados) + "  ?"
     tam = 110
-    while d.textlength(txt, font=fonte("Black", tam)) > 860:
+    while d.textlength(txt, font=fonte("Black", tam)) > 900:
         tam -= 4
     d.text((540, 680), txt, font=fonte("Black", tam), fill=TINTA, anchor="mm")
-    texto_centro(d, 540, 990, "Você tem 10 segundos ⏱".replace(" ⏱", ""), fonte("SemiBold", 52), AMARELO)
-    rodape(d, W, H, "comente sua resposta, depois arraste →")
+    texto_centro(d, 540, 990, "Você tem 30 segundos", fonte("SemiBold", 52), AMARELO)
+    rodape(d, W, H, "travou? arraste para a dica →")
     fotos.append(img)
-    # slide 2 - resposta
+    # slide 2 - dica
+    img = fundo(W, H)
+    d = ImageDraw.Draw(img)
+    pilula(d, 540, 70, "DICA", fonte("Black", 40))
+    texto_centro(d, 540, 420, dica, fonte("Black", 76), BRANCO, max_w=900)
+    texto_centro(d, 540, 900, "Comente sua resposta antes de ver a solução", fonte("SemiBold", 46), AMARELO, max_w=880)
+    rodape(d, W, H, "arraste para a resposta →")
+    fotos.append(img)
+    # slide 3 - resposta
     img = fundo(W, H)
     d = ImageDraw.Draw(img)
     pilula(d, 540, 70, "RESPOSTA", fonte("Black", 40))
-    d = cartao(img, (70, 200, 1010, 1060))
-    d.text((540, 430), str(resp), font=fonte("Black", 260), fill=(120, 60, 230), anchor="mm")
-    texto_centro(d, 540, 640, regra, fonte("Bold", 52), TINTA, max_w=820)
+    d = cartao(img, (60, 200, 1020, 1080))
+    d.text((540, 410), str(resp), font=fonte("Black", 240), fill=(120, 60, 230), anchor="mm")
+    texto_centro(d, 540, 600, regra, fonte("Bold", 46), TINTA, max_w=840)
     txt = "  ".join(str(n) for n in seq)
-    tam = 70
-    while d.textlength(txt, font=fonte("Bold", tam)) > 820:
+    tam = 66
+    while d.textlength(txt, font=fonte("Bold", tam)) > 840:
         tam -= 4
-    d.text((540, 920), txt, font=fonte("Bold", tam), fill=(110, 100, 150), anchor="mm")
+    d.text((540, 960), txt, font=fonte("Bold", tam), fill=(110, 100, 150), anchor="mm")
     rodape(d, W, H, "Acertou? Siga para 1 desafio novo por dia")
     fotos.append(img)
     nomes = []
@@ -284,8 +319,9 @@ def carrossel_sequencia(seq, regra, num, pasta):
 
 
 # ---------------------------------------------------------------- ache o diferente (Reel)
-PARES = [("69", "96"), ("O", "Q"), ("E", "F"), ("8", "B"), ("M", "N"), ("b", "d"), ("Z", "2"), ("5", "S"), ("U", "V"), ("C", "G"),
-         ("P", "R"), ("W", "VV"), ("q", "p"), ("38", "83"), ("H", "N"), ("6", "9"), ("T", "I"), ("rn", "m"), ("ã", "á"), ("81", "18")]
+PARES = [("rn", "m"), ("O", "0"), ("8", "B"), ("E", "F"), ("R", "P"), ("vv", "w"), ("cl", "d"), ("ç", "c"),
+         ("ã", "á"), ("é", "è"), ("Q", "O"), ("38", "36"), ("71", "17"), ("ü", "u"), ("6", "b"), ("G", "C"),
+         ("ô", "õ"), ("5", "S"), ("2", "Z"), ("ñ", "n")]
 
 
 def gera_audio(caminho, dur, t_revela, fps=30):
@@ -310,21 +346,21 @@ def gera_audio(caminho, dur, t_revela, fps=30):
         w.writeframes((a * 32767).astype(np.int16).tobytes())
 
 
-def reel_ache(par, rng, num, pasta, segundos=7):
+def reel_ache(par, rng, num, pasta, segundos=5):
     W, H, FPS = 1080, 1920, 30
     base, alvo = par
-    cols, rows = 8, 11
-    tr, tc = rng.randrange(1, rows - 1), rng.randrange(1, cols - 1)
+    cols, rows = 10, 14
+    tr, tc = rng.randrange(0, rows), rng.randrange(0, cols)
     gx0, gy0, gx1, gy1 = 70, 470, 1010, 1550
     cw, ch = (gx1 - gx0) / cols, (gy1 - gy0) / rows
-    f = fonte("Bold", int(min(cw, ch) * (0.62 if len(base) == 1 else 0.5)))
+    f = fonte("SemiBold", int(min(cw, ch) * (0.6 if len(base) == 1 else 0.46)))
 
     def quadro_base():
         img = fundo(W, H)
         d = ImageDraw.Draw(img)
         pilula(d, 540, 120, f"DESAFIO #{num:03d}", fonte("Black", 44))
         texto_centro(d, 540, 235, f"Ache o {alvo}", fonte("Black", 110))
-        texto_centro(d, 540, 375, f"no meio dos {base}", fonte("SemiBold", 54), (230, 222, 255))
+        texto_centro(d, 540, 375, f"no meio dos {base} · só 1% acha em {segundos}s", fonte("SemiBold", 50), (230, 222, 255))
         d = cartao(img, (gx0 - 30, gy0 - 30, gx1 + 30, gy1 + 30), 44)
         for r in range(rows):
             for c in range(cols):
@@ -377,69 +413,27 @@ TAGS = "#desafio #enigma #quebracabeca #testedelogica #raciociniologico"
 
 
 def legenda_ache(base, alvo, linha, coluna):
-    return (f"Ache o {alvo} no meio dos {base} 👀 Você tem 7 segundos!\n\n"
+    return (f"Ache o {alvo} no meio dos {base} 👀 Você tem 5 segundos!\n\n"
             f"Comente em quantos segundos achou ⏱ e mande para alguém que se acha bom de olho.\n\n"
             f"Siga @quebra.cuca.diario para 1 desafio novo por dia 🧩\n\n{TAGS}")
 
 
 def legenda_formas(d):
-    return ("95% erra esse 🤯 Quanto vale a última linha?\n\n"
+    return ("Só 2% acertam 🤯 Quanto vale a última linha?\n\n"
             "Comente seu palpite ANTES de arrastar para a resposta 👇\n"
             "Salve para testar a família depois.\n\n"
             "Siga @quebra.cuca.diario para 1 desafio novo por dia 🧩\n\n" + TAGS)
 
 
 def legenda_seq():
-    return ("Qual é o próximo número? 🔢 Você tem 10 segundos!\n\n"
-            "Comente sua resposta e depois arraste para conferir 👉\n"
+    return ("Qual é o próximo número? 🔢 Só 3% acertam!\n\n"
+            "Comente sua resposta, depois arraste para a dica e a solução 👉\n"
             "Mande para aquele amigo que adora matemática.\n\n"
             "Siga @quebra.cuca.diario para 1 desafio novo por dia 🧩\n\n" + TAGS)
 
 
-# ---------------------------------------------------------------- lote
-def gera_lote(saida, inicio, semente):
-    rng = random.Random(semente)
-    os.makedirs(saida, exist_ok=True)
-    plano = ["ache", "formas", "ache", "seq", "ache", "formas", "ache", "seq", "ache"]
-    pares = rng.sample(PARES, 5)
-    seqs = gera_sequencia(rng)
-    rng.shuffle(seqs)
-    manifesto = []
-    for k, tipo in enumerate(plano):
-        num = inicio + k
-        pasta = os.path.join(saida, f"{num:03d}_{tipo}")
-        os.makedirs(pasta, exist_ok=True)
-        if tipo == "ache":
-            par = pares.pop()
-            mp4, capa, (l, c) = reel_ache(par, rng, num, pasta)
-            item = dict(num=num, tipo="reel", arquivos=[mp4], capa=capa,
-                        resposta=f"'{par[1]}' na linha {l}, coluna {c}", legenda=legenda_ache(par[0], par[1], l, c))
-        elif tipo == "formas":
-            dd = gera_formas(rng)
-            fotos = carrossel_formas(dd, num, pasta)
-            item = dict(num=num, tipo="carrossel", arquivos=fotos,
-                        resposta=f"circulo={dd['a']} quadrado={dd['b']} triangulo={dd['c']} -> {dd['resposta']}",
-                        legenda=legenda_formas(dd), dados={k_: v for k_, v in dd.items() if k_ != 'eqs'} | {"eqs": dd["eqs"]})
-        else:
-            seq, regra, nome = seqs.pop()
-            fotos = carrossel_sequencia(seq, regra, num, pasta)
-            item = dict(num=num, tipo="carrossel", arquivos=fotos, resposta=f"{seq} ({nome})",
-                        legenda=legenda_seq(), dados=dict(seq=seq, regra=regra))
-        with open(os.path.join(pasta, "legenda.txt"), "w") as fh:
-            fh.write(item["legenda"])
-        manifesto.append(item)
-        print(f"#{num:03d} {item['tipo']}: {item['resposta']}")
-    with open(os.path.join(saida, "manifesto.json"), "w") as fh:
-        json.dump(manifesto, fh, ensure_ascii=False, indent=2)
-    return manifesto
-
-
-if __name__ == "__main__":
-    gera_lote(sys.argv[1], int(sys.argv[2]), int(sys.argv[3]))
-
-
 # ---------------------------------------------------------------- 1 post por vez (usado pelo robo)
-PLANO_SEMANAL = ["ache", "formas", "ache", "seq", "ache", "ache", "seq"]
+PLANO_SEMANAL = ["ache", "formas", "ache", "seq", "ache", "formas", "seq"]
 
 
 def gera_um(num, pasta_base):
@@ -457,18 +451,26 @@ def gera_um(num, pasta_base):
         dd = gera_formas(rng)
         carrossel_formas(dd, num, pasta)
         item = dict(num=num, tipo="carrossel", arquivos=["slide1.jpg", "slide2.jpg", "slide3.jpg"],
-                    resposta=f"circulo={dd['a']} quadrado={dd['b']} triangulo={dd['c']} -> {dd['resposta']}",
+                    resposta=f"circulo={dd['a']} quadrado={dd['b']} triangulo={dd['c']} estrela={dd['d']} -> {dd['resposta']}",
                     legenda=legenda_formas(dd))
         # conferencia automatica
-        v = {"circulo": dd["a"], "quadrado": dd["b"], "triangulo": dd["c"]}
+        v = {"circulo": dd["a"], "quadrado": dd["b"], "triangulo": dd["c"], "estrela": dd["d"]}
         for termos, res in dd["eqs"]:
-            assert eval("".join(str(v.get(t, t)) for t in termos)) == res
-        assert dd["a"] + dd["b"] * dd["c"] == dd["resposta"]
+            assert avalia(termos, v) == res
+        assert avalia(dd["pergunta"], v) == dd["resposta"]
     else:
-        seq, regra, nome = rng.choice(gera_sequencia(rng))
-        carrossel_sequencia(seq, regra, num, pasta)
-        item = dict(num=num, tipo="carrossel", arquivos=["slide1.jpg", "slide2.jpg"], resposta=f"{seq} ({nome})",
+        tipos = gera_sequencia(rng)
+        idx = ((num // 7) * 2 + (0 if num % 7 == 3 else 1)) % len(tipos)  # gira entre as regras
+        seq, dica, regra, nome = tipos[idx]
+        carrossel_sequencia(seq, dica, regra, num, pasta)
+        item = dict(num=num, tipo="carrossel", arquivos=["slide1.jpg", "slide2.jpg", "slide3.jpg"], resposta=f"{seq} ({nome})",
                     legenda=legenda_seq())
     with open(os.path.join(pasta, "post.json"), "w") as fh:
         json.dump(item, fh, ensure_ascii=False, indent=2)
     return item
+
+
+if __name__ == "__main__":
+    # uso: python gerador.py <pasta> <numero_inicial> <quantidade>
+    for n in range(int(sys.argv[2]), int(sys.argv[2]) + int(sys.argv[3])):
+        print(gera_um(n, sys.argv[1])["resposta"])

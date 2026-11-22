@@ -1,9 +1,11 @@
 {
   "num": 5,
-  "tipo": "reel",
+  "tipo": "carrossel",
   "arquivos": [
-    "reel.mp4"
+    "slide1.jpg",
+    "slide2.jpg",
+    "slide3.jpg"
   ],
-  "resposta": "'G' na linha 7, coluna 2",
-  "legenda": "Ache o G no meio dos C 👀 Você tem 7 segundos!\n\nComente em quantos segundos achou ⏱ e mande para alguém que se acha bom de olho.\n\nSiga @quebra.cuca.diario para 1 desafio novo por dia 🧩\n\n#desafio #enigma #quebracabeca #testedelogica #raciociniologico"
+  "resposta": "circulo=4 quadrado=8 triangulo=5 estrela=3 -> 39",
+  "legenda": "Só 2% acertam 🤯 Quanto vale a última linha?\n\nComente seu palpite ANTES de arrastar para a resposta 👇\nSalve para testar a família depois.\n\nSiga @quebra.cuca.diario para 1 desafio novo por dia 🧩\n\n#desafio #enigma #quebracabeca #testedelogica #raciociniologico"
 }

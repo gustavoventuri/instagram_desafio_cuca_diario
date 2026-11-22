@@ -3,8 +3,9 @@
   "tipo": "carrossel",
   "arquivos": [
     "slide1.jpg",
-    "slide2.jpg"
+    "slide2.jpg",
+    "slide3.jpg"
   ],
-  "resposta": "[8, 17, 26, 35, 44, 53] (soma constante)",
-  "legenda": "Qual é o próximo número? 🔢 Você tem 10 segundos!\n\nComente sua resposta e depois arraste para conferir 👉\nMande para aquele amigo que adora matemática.\n\nSiga @quebra.cuca.diario para 1 desafio novo por dia 🧩\n\n#desafio #enigma #quebracabeca #testedelogica #raciociniologico"
+  "resposta": "circulo=6 quadrado=3 triangulo=2 estrela=7 -> 7",
+  "legenda": "Só 2% acertam 🤯 Quanto vale a última linha?\n\nComente seu palpite ANTES de arrastar para a resposta 👇\nSalve para testar a família depois.\n\nSiga @quebra.cuca.diario para 1 desafio novo por dia 🧩\n\n#desafio #enigma #quebracabeca #testedelogica #raciociniologico"
 }

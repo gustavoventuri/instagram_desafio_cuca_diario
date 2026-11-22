@@ -1,10 +1,9 @@
 {
   "num": 4,
-  "tipo": "carrossel",
+  "tipo": "reel",
   "arquivos": [
-    "slide1.jpg",
-    "slide2.jpg"
+    "reel.mp4"
   ],
-  "resposta": "[4, 9, 16, 25, 36, 49] (quadrados)",
-  "legenda": "Qual é o próximo número? 🔢 Você tem 10 segundos!\n\nComente sua resposta e depois arraste para conferir 👉\nMande para aquele amigo que adora matemática.\n\nSiga @quebra.cuca.diario para 1 desafio novo por dia 🧩\n\n#desafio #enigma #quebracabeca #testedelogica #raciociniologico"
+  "resposta": "'17' linha 8, coluna 5",
+  "legenda": "Ache o 17 no meio dos 71 👀 Você tem 5 segundos!\n\nComente em quantos segundos achou ⏱ e mande para alguém que se acha bom de olho.\n\nSiga @quebra.cuca.diario para 1 desafio novo por dia 🧩\n\n#desafio #enigma #quebracabeca #testedelogica #raciociniologico"
 }

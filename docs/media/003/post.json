@@ -1,9 +1,11 @@
 {
   "num": 3,
-  "tipo": "reel",
+  "tipo": "carrossel",
   "arquivos": [
-    "reel.mp4"
+    "slide1.jpg",
+    "slide2.jpg",
+    "slide3.jpg"
   ],
-  "resposta": "'S' na linha 3, coluna 7",
-  "legenda": "Ache o S no meio dos 5 👀 Você tem 7 segundos!\n\nComente em quantos segundos achou ⏱ e mande para alguém que se acha bom de olho.\n\nSiga @quebra.cuca.diario para 1 desafio novo por dia 🧩\n\n#desafio #enigma #quebracabeca #testedelogica #raciociniologico"
+  "resposta": "[2, 4, 8, 8, 14, 16, 20] (intercalada)",
+  "legenda": "Qual é o próximo número? 🔢 Só 3% acertam!\n\nComente sua resposta, depois arraste para a dica e a solução 👉\nMande para aquele amigo que adora matemática.\n\nSiga @quebra.cuca.diario para 1 desafio novo por dia 🧩\n\n#desafio #enigma #quebracabeca #testedelogica #raciociniologico"
 }
