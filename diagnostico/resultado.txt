@@ -1,0 +1,5 @@
+::error::Erro da API (400) em 61596651337444: {"error":{"message":"(#12) cannot_access_user_username_field is deprecated for versions v2.0 and higherusername field is deprecated for versions v2.0 and higher","code":12,"type":"OAuthException","fbtrace_id":"AMxxeMB5HyzC_GpVLcueBws"}}
+Erro da API (400) em 61596651337444: {"error":{"message":"(#12) cannot_access_user_username_field is deprecated for versions v2.0 and higherusername field is deprecated for versions v2.0 and higher","code":12,"type":"OAuthException","fbtrace_id":"AMxxeMB5HyzC_GpVLcueBws"}}
+codigo_saida=1
+tem_token=sim tem_id=sim
+Sun Nov 22 01:40:35 UTC 2026
