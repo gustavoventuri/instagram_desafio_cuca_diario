@@ -111,7 +111,20 @@ def espera_container(cid, limite=600):
     falha(f"container {cid} nao terminou de processar a tempo")
 
 
+def ja_publicou_recentemente(e, horas=18):
+    """Evita post duplicado quando o horario de reserva roda depois do principal."""
+    from datetime import datetime, timezone
+    for p in reversed(e["publicados"]):
+        if p.get("via") == "api":
+            quando = datetime.strptime(p["quando"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+            return (datetime.now(timezone.utc) - quando).total_seconds() < horas * 3600
+    return False
+
+
 def publicar():
+    if os.environ.get("EVENTO") == "schedule" and ja_publicou_recentemente(carrega_estado()):
+        print("ja houve publicacao nas ultimas 18h - horario de reserva nao publica")
+        return
     base = os.environ.get("MEDIA_BASE_URL", "").rstrip("/")
     if not base:
         falha("MEDIA_BASE_URL nao definido")

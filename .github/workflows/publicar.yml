@@ -3,6 +3,7 @@ name: Publicar desafio do dia
 on:
   schedule:
     - cron: "47 21 * * *"   # 18:47 em Brasilia, todo dia
+    - cron: "23 23 * * *"   # 20:23 em Brasilia: reserva, so publica se o das 18:47 nao rodou
   workflow_dispatch: {}
 
 permissions:
@@ -70,6 +71,7 @@ jobs:
         env:
           IG_TOKEN: ${{ secrets.IG_TOKEN }}
           IG_USER_ID: ${{ vars.IG_USER_ID }}
+          EVENTO: ${{ github.event_name }}
           MEDIA_BASE_URL: ${{ vars.MEDIA_BASE_URL || format('https://{0}.github.io/{1}', github.repository_owner, github.event.repository.name) }}
         run: python publicar.py publicar
 
