@@ -5,7 +5,7 @@ set -e
 RAW=https://raw.githubusercontent.com/gustavoventuri/instagram_desafio_cuca_diario/main/celular
 DEST=$HOME/quebracuca
 mkdir -p "$DEST"
-for f in responder.js laco.sh .env.example; do curl -fsSL "$RAW/$f" -o "$DEST/$f"; done
+for f in responder.js disparar.js laco.sh .env.example; do curl -fsSL "$RAW/$f" -o "$DEST/$f"; done
 chmod +x "$DEST/laco.sh"
 [ -f "$DEST/.env" ] || cp "$DEST/.env.example" "$DEST/.env"
 command -v node >/dev/null || pkg install -y nodejs

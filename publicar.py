@@ -122,8 +122,8 @@ def ja_publicou_recentemente(e, horas=18):
 
 
 def publicar():
-    if os.environ.get("EVENTO") == "schedule" and ja_publicou_recentemente(carrega_estado()):
-        print("ja houve publicacao nas ultimas 18h - horario de reserva nao publica")
+    if os.environ.get("FORCAR", "").lower() != "true" and ja_publicou_recentemente(carrega_estado()):
+        print("ja houve publicacao nas ultimas 18h - nao publica de novo (use forcar=true para publicar assim mesmo)")
         return
     base = os.environ.get("MEDIA_BASE_URL", "").rstrip("/")
     if not base:
