@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: "47 21 * * *"   # 18:47 em Brasilia, todo dia
     - cron: "23 23 * * *"   # 20:23 em Brasilia: reserva, so publica se o das 18:47 nao rodou
+  push:
+    paths:
+      - "diagnostico/publicar_agora.txt"   # permite disparar por commit
   workflow_dispatch:
     inputs:
       forcar:
@@ -13,8 +16,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
   group: publicar
@@ -23,8 +24,6 @@ concurrency:
 jobs:
   publicar:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
     steps:
       - name: Verificar configuracao
         id: cfg
@@ -61,16 +60,6 @@ jobs:
           git diff --cached --quiet || git commit -m "Gera proximo desafio"
           git push
 
-      - name: Publicar a pasta docs no GitHub Pages
-        if: steps.cfg.outputs.ok == 'true'
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs
-
-      - name: Deploy do Pages
-        if: steps.cfg.outputs.ok == 'true'
-        uses: actions/deploy-pages@v4
-
       - name: Publicar no Instagram
         if: steps.cfg.outputs.ok == 'true'
         env:
@@ -78,12 +67,15 @@ jobs:
           IG_USER_ID: ${{ vars.IG_USER_ID }}
           EVENTO: ${{ github.event_name }}
           FORCAR: ${{ inputs.forcar }}
-          MEDIA_BASE_URL: ${{ vars.MEDIA_BASE_URL || format('https://{0}.github.io/{1}', github.repository_owner, github.event.repository.name) }}
-        run: python publicar.py publicar
+          MEDIA_BASE_URL: ${{ vars.MEDIA_BASE_URL }}
+        run: |
+          # midias servidas pelo jsDelivr direto do repositorio publico, fixadas no commit atual
+          if [ -z "$MEDIA_BASE_URL" ]; then export MEDIA_BASE_URL="https://cdn.jsdelivr.net/gh/${GITHUB_REPOSITORY}@$(git rev-parse HEAD)/docs"; fi
+          python publicar.py publicar
 
       - name: Salvar estado
-        if: steps.cfg.outputs.ok == 'true'
+        if: always() && steps.cfg.outputs.ok == 'true'
         run: |
-          git add estado.json
+          git add estado.json docs diagnostico
           git diff --cached --quiet || git commit -m "Publica desafio"
           git pull --rebase -q && git push

@@ -20,8 +20,15 @@ import time
 import requests
 
 def falha(msg):
-    """Mostra o erro como anotacao no resumo do GitHub Actions e encerra."""
+    """Mostra o erro como anotacao no resumo do GitHub Actions, grava em diagnostico/ e encerra."""
     print(f"::error::{msg}")
+    try:
+        d = os.path.join(os.path.dirname(os.path.abspath(__file__)), "diagnostico")
+        os.makedirs(d, exist_ok=True)
+        with open(os.path.join(d, "ultimo_erro.txt"), "w") as fh:
+            fh.write(time.strftime("%Y-%m-%dT%H:%M:%SZ ", time.gmtime()) + str(msg) + "\n")
+    except OSError:
+        pass
     sys.exit(msg)
 
 
@@ -159,6 +166,15 @@ def publicar():
     e["proximo"] = num + 1
     salva_estado(e)
     print(f"publicado #{num:03d}: {link}")
+    limpa_antigos(num)
+
+
+def limpa_antigos(publicado, manter=3):
+    """Apaga as midias de posts ja publicados ha mais de `manter` posts (repositorio leve para o jsDelivr)."""
+    import shutil
+    for nome in os.listdir(MIDIA):
+        if nome.isdigit() and int(nome) <= publicado - manter:
+            shutil.rmtree(os.path.join(MIDIA, nome), ignore_errors=True)
 
 
 # ---------------------------------------------------------------- token

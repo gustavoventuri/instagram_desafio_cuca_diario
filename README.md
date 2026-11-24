@@ -9,9 +9,9 @@ Gera e publica 1 desafio por dia no Instagram (18:47, horário de Brasília) usa
 
 ## Configuração (uma vez só)
 
-1. **O repositório precisa ser público** para usar o GitHub Pages grátis, porque o Instagram baixa as mídias de uma URL pública. Não há segredos no código.
+1. **O repositório precisa ser público**, porque o Instagram baixa as mídias de uma URL pública (servidas pelo jsDelivr direto do repositório). Não há segredos no código.
    *Settings → General → Change visibility → Public*
-2. **GitHub Pages**: *Settings → Pages → Source: **GitHub Actions***.
+2. (não é mais necessário configurar o GitHub Pages)
 3. **Token (usuário do sistema, não expira)**: em business.facebook.com → *Configurações* → *Usuários do sistema*:
    - Crie o usuário `quebra-cuca-bot` como Admin.
    - Em *Atribuir ativos*, dê a ele o **app** e o perfil do Instagram **@quebra.cuca.diario**, com controle total.
@@ -23,7 +23,8 @@ Gera e publica 1 desafio por dia no Instagram (18:47, horário de Brasília) usa
 
 ## Uso no dia a dia
 
-- Para publicar agora: *Actions → Publicar desafio do dia → Run workflow*.
+- Para publicar agora: *Actions → Publicar desafio do dia → Run workflow*, ou um commit alterando `diagnostico/publicar_agora.txt`.
+- O último erro de publicação fica em `diagnostico/ultimo_erro.txt`.
 - Para pausar: *Actions → Publicar desafio do dia → ⋯ → Disable workflow*.
 - Para mudar o horário: edite o `cron` em `publicar.yml`. O horário é em UTC (Brasília = UTC−3).
 
