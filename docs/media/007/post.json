@@ -1,6 +1,7 @@
 {
   "num": 7,
   "tipo": "reel",
+  "desafio": "ache",
   "arquivos": [
     "reel.mp4"
   ],

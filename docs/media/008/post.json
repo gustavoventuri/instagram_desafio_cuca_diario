@@ -1,11 +1,10 @@
 {
   "num": 8,
-  "tipo": "carrossel",
+  "tipo": "reel",
+  "desafio": "formas",
   "arquivos": [
-    "slide1.jpg",
-    "slide2.jpg",
-    "slide3.jpg"
+    "reel.mp4"
   ],
   "resposta": "circulo=6 quadrado=3 triangulo=2 estrela=7 -> 7",
-  "legenda": "Só 2% acertam 🤯 Quanto vale a última linha?\n\nComente seu palpite ANTES de arrastar para a resposta 👇\nSalve para testar a família depois.\n\nSiga @quebra.cuca.diario para 1 desafio novo por dia 🧩\n\n#desafio #enigma #quebracabeca #testedelogica #raciociniologico"
+  "legenda": "Só 2% acertam 🤯 Quanto vale a última linha?\n\nComente seu resultado ANTES da resposta aparecer 👇\nManda pra quem jura que é bom de conta.\n\nSiga @quebra.cuca.diario para 1 desafio novo por dia 🧩\n\n#desafio #enigma #quebracabeca #testedelogica #raciociniologico"
 }

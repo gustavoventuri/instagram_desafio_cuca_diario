@@ -73,6 +73,14 @@ jobs:
           if [ -z "$MEDIA_BASE_URL" ]; then export MEDIA_BASE_URL="https://cdn.jsdelivr.net/gh/${GITHUB_REPOSITORY}@$(git rev-parse HEAD)/docs"; fi
           python publicar.py publicar
 
+      - name: Atualizar estatisticas
+        if: always() && steps.cfg.outputs.ok == 'true'
+        continue-on-error: true
+        env:
+          IG_TOKEN: ${{ secrets.IG_TOKEN }}
+          IG_USER_ID: ${{ vars.IG_USER_ID }}
+        run: python metricas.py
+
       - name: Salvar estado
         if: always() && steps.cfg.outputs.ok == 'true'
         run: |

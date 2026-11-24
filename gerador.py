@@ -433,38 +433,51 @@ def legenda_seq():
 
 
 # ---------------------------------------------------------------- 1 post por vez (usado pelo robo)
-PLANO_SEMANAL = ["ache", "formas", "ache", "seq", "ache", "formas", "seq"]
+PLANO_SEMANAL = ["ache", "formas", "triangulos", "ache", "seq", "triangulos", "formas"]
+
+LEGENDA_FIM = "\n\nSiga @quebra.cuca.diario para 1 desafio novo por dia 🧩\n\n" + TAGS
+
+
+def legenda_reel(tipo):
+    textos = {
+        "formas": "Só 2% acertam 🤯 Quanto vale a última linha?\n\nComente seu resultado ANTES da resposta aparecer 👇\nManda pra quem jura que é bom de conta.",
+        "triangulos": "Qual número falta no último triângulo? 🔺 Os 3 primeiros seguem a mesma regra.\n\nComente sua resposta antes do fim do vídeo 👇\nMarca o amigo mais inteligente que você conhece.",
+        "seq": "Qual é o próximo número? 🔢 Só 3% acertam sem a dica.\n\nComente sua resposta antes do fim do vídeo 👇\nManda pra aquele amigo que adora matemática.",
+    }
+    return textos[tipo] + LEGENDA_FIM
 
 
 def gera_um(num, pasta_base):
-    """Gera o post de numero `num` (semente = num) e devolve o item do manifesto."""
+    """Gera o post de numero `num` (semente = num) como Reel e devolve o item do manifesto."""
+    import reels
     rng = random.Random(num * 7919)
     tipo = PLANO_SEMANAL[num % len(PLANO_SEMANAL)]
     pasta = os.path.join(pasta_base, f"{num:03d}")
     os.makedirs(pasta, exist_ok=True)
     if tipo == "ache":
         par = rng.choice(PARES)
-        mp4, capa, (l, c) = reel_ache(par, rng, num, pasta)
-        item = dict(num=num, tipo="reel", arquivos=["reel.mp4"], resposta=f"'{par[1]}' linha {l}, coluna {c}",
-                    legenda=legenda_ache(par[0], par[1], l, c))
+        _, _, (l, c) = reel_ache(par, rng, num, pasta)
+        resposta, legenda = f"'{par[1]}' linha {l}, coluna {c}", legenda_ache(par[0], par[1], l, c)
     elif tipo == "formas":
         dd = gera_formas(rng)
-        carrossel_formas(dd, num, pasta)
-        item = dict(num=num, tipo="carrossel", arquivos=["slide1.jpg", "slide2.jpg", "slide3.jpg"],
-                    resposta=f"circulo={dd['a']} quadrado={dd['b']} triangulo={dd['c']} estrela={dd['d']} -> {dd['resposta']}",
-                    legenda=legenda_formas(dd))
-        # conferencia automatica
         v = {"circulo": dd["a"], "quadrado": dd["b"], "triangulo": dd["c"], "estrela": dd["d"]}
         for termos, res in dd["eqs"]:
             assert avalia(termos, v) == res
         assert avalia(dd["pergunta"], v) == dd["resposta"]
+        reels.reel_formas(dd, num, pasta)
+        resposta, legenda = f"circulo={dd['a']} quadrado={dd['b']} triangulo={dd['c']} estrela={dd['d']} -> {dd['resposta']}", legenda_reel("formas")
+    elif tipo == "triangulos":
+        dt = reels.gera_triangulos(rng, num // 3)
+        for a_, b_, c_, v_ in dt["tri"]:
+            assert reels.REGRAS_TRI[(num // 3) % len(reels.REGRAS_TRI)][0](a_, b_, c_) == v_
+        reels.reel_triangulos(dt, num, pasta)
+        resposta, legenda = f"{dt['resposta']} ({dt['regra']})", legenda_reel("triangulos")
     else:
         tipos = gera_sequencia(rng)
-        idx = ((num // 7) * 2 + (0 if num % 7 == 3 else 1)) % len(tipos)  # gira entre as regras
-        seq, dica, regra, nome = tipos[idx]
-        carrossel_sequencia(seq, dica, regra, num, pasta)
-        item = dict(num=num, tipo="carrossel", arquivos=["slide1.jpg", "slide2.jpg", "slide3.jpg"], resposta=f"{seq} ({nome})",
-                    legenda=legenda_seq())
+        seq, dica, regra, nome = tipos[(num // 7) % len(tipos)]
+        reels.reel_sequencia(seq, dica, regra, num, pasta)
+        resposta, legenda = f"{seq} ({nome})", legenda_reel("seq")
+    item = dict(num=num, tipo="reel", desafio=tipo, arquivos=["reel.mp4"], resposta=resposta, legenda=legenda)
     with open(os.path.join(pasta, "post.json"), "w") as fh:
         json.dump(item, fh, ensure_ascii=False, indent=2)
     return item

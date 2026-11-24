@@ -1,11 +1,10 @@
 {
   "num": 5,
-  "tipo": "carrossel",
+  "tipo": "reel",
+  "desafio": "triangulos",
   "arquivos": [
-    "slide1.jpg",
-    "slide2.jpg",
-    "slide3.jpg"
+    "reel.mp4"
   ],
-  "resposta": "circulo=4 quadrado=8 triangulo=5 estrela=3 -> 39",
-  "legenda": "Só 2% acertam 🤯 Quanto vale a última linha?\n\nComente seu palpite ANTES de arrastar para a resposta 👇\nSalve para testar a família depois.\n\nSiga @quebra.cuca.diario para 1 desafio novo por dia 🧩\n\n#desafio #enigma #quebracabeca #testedelogica #raciociniologico"
+  "resposta": "17 (topo × esquerda − direita)",
+  "legenda": "Qual número falta no último triângulo? 🔺 Os 3 primeiros seguem a mesma regra.\n\nComente sua resposta antes do fim do vídeo 👇\nMarca o amigo mais inteligente que você conhece.\n\nSiga @quebra.cuca.diario para 1 desafio novo por dia 🧩\n\n#desafio #enigma #quebracabeca #testedelogica #raciociniologico"
 }
