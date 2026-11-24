@@ -1,1 +1,2 @@
-(#10) Application does not have permission for this action
+(#100) The Media Insights API does not support the ig_reels_avg_watch_time metric for this media product type.
+(#100) The Media Insights API does not support the ig_reels_video_view_total_time metric for this media product type.
