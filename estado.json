@@ -1,5 +1,5 @@
 {
-  "proximo": 5,
+  "proximo": 6,
   "publicados": [
     {
       "num": 1,
@@ -29,6 +29,14 @@
       "media_id": "18149636977575424",
       "link": "https://www.instagram.com/reel/DgJGZUYgojW/",
       "quando": "2026-11-24T23:09:01Z",
+      "via": "api"
+    },
+    {
+      "num": 5,
+      "tipo": "reel",
+      "media_id": "17969334494982453",
+      "link": "https://www.instagram.com/reel/DgLiIaQB1fu/",
+      "quando": "2026-11-25T21:49:50Z",
       "via": "api"
     }
   ]
