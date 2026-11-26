@@ -38,6 +38,16 @@
       "link": "https://www.instagram.com/reel/DgLiIaQB1fu/",
       "quando": "2026-11-25T21:49:50Z",
       "via": "api"
+    },
+    {
+      "num": 1,
+      "serie": "curiosidades",
+      "tipo": "reel",
+      "media_id": "18421999885083862",
+      "link": "https://www.instagram.com/reel/DgNWtodhSTK/",
+      "quando": "2026-11-26T14:48:32Z",
+      "via": "api"
     }
-  ]
+  ],
+  "proximo_curiosidades": 2
 }
