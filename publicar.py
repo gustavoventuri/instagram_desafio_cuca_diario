@@ -85,7 +85,8 @@ def preparar():
         print(f"{SERIE} #{num:03d} ja existe na fila")
         return
     if SERIE == "curiosidades":
-        falha(f"fila de curiosidades vazia (falta docs/curiosidades/{num:03d}); a tarefa semanal precisa gerar novas")
+        prepara_curiosidade(num, pasta)
+        return
     sys.path.insert(0, RAIZ)
     import gerador
     item = gerador.gera_um(num, MIDIA)
@@ -94,6 +95,34 @@ def preparar():
         if f == "capa.jpg":
             os.remove(os.path.join(pasta, f))
     print(f"gerado #{num:03d}: {item['tipo']} | resposta: {item['resposta']}")
+
+
+def itens_curiosidades():
+    """Todas as curiosidades escritas pela tarefa semanal, em ordem: o item k (a partir de 1) e a curiosidade #k.
+    Arquivos conteudo/curiosidades-AAAA-MM-DD.json, lidos em ordem de nome."""
+    import glob
+    itens = []
+    for f in sorted(glob.glob(os.path.join(RAIZ, "conteudo", "curiosidades-*.json"))):
+        with open(f, encoding="utf-8") as fh:
+            itens += json.load(fh)
+    return itens
+
+
+def prepara_curiosidade(num, pasta):
+    """Renderiza a curiosidade #num a partir do conteudo/ (o workflow ja tem ffmpeg e Pillow)."""
+    itens = itens_curiosidades()
+    if num > len(itens):
+        falha(f"fila de curiosidades vazia: so ha {len(itens)} no conteudo/ e falta a #{num:03d}; a tarefa semanal precisa escrever novas")
+    sys.path.insert(0, RAIZ)
+    import curiosidades
+    if not os.path.exists(curiosidades.EMOJI_FONTE):
+        import subprocess
+        subprocess.run("sudo apt-get install -y -qq fonts-noto-color-emoji", shell=True, check=False)
+    post = curiosidades.monta(itens[num - 1], num, pasta)
+    capa = os.path.join(pasta, "capa.jpg")
+    if os.path.exists(capa):
+        os.remove(capa)
+    print(f"gerada curiosidade #{num:03d}: resposta: {post['resposta']}")
 
 
 # ---------------------------------------------------------------- publicar

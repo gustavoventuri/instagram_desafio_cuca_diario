@@ -5,6 +5,7 @@ Gera e publica 1 desafio por dia no Instagram (18:47, horário de Brasília) usa
 - `gerador.py`: cria os desafios. São Reels "ache o diferente" (com cronômetro, som e revelação) e carrosséis de formas e de sequências. O próprio código confere as respostas.
 - `publicar.py`: publica o próximo post da fila e atualiza o `estado.json`.
 - `docs/media/NNN/`: é a fila. O que já estiver lá é publicado na ordem. Quando a fila acaba, o robô gera o próximo sozinho.
+- Curiosidades (11:43): a tarefa semanal do Claude (sábado) escreve `conteudo/curiosidades-AAAA-MM-DD.json` com fontes e faz commit. Os arquivos são lidos em ordem de nome e o item k é a curiosidade #k; o `publicar.py preparar` renderiza a do dia com `curiosidades.py` em `docs/curiosidades/NNN/` (as que já estiverem lá são usadas como estão).
 - `.github/workflows/`: `publicar.yml` roda todo dia, `renovar_token.yml` roda toda segunda e `testar.yml` é acionado manualmente.
 
 ## Configuração (uma vez só)
