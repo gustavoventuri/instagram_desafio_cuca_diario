@@ -2,15 +2,22 @@ name: Publicar desafio do dia
 
 on:
   schedule:
-    - cron: "47 21 * * *"   # 18:47 em Brasilia, todo dia
+    - cron: "43 14 * * *"   # 11:43 em Brasilia: curiosidade
+    - cron: "47 21 * * *"   # 18:47 em Brasilia: desafio
     - cron: "23 23 * * *"   # 20:23 em Brasilia: reserva, so publica se o das 18:47 nao rodou
   push:
     paths:
-      - "diagnostico/publicar_agora.txt"   # permite disparar por commit
+      - "diagnostico/publicar_agora.txt"              # desafio, disparado por commit
+      - "diagnostico/publicar_curiosidade_agora.txt"  # curiosidade, disparada por commit
   workflow_dispatch:
     inputs:
+      serie:
+        description: "Qual serie publicar"
+        type: choice
+        options: [desafios, curiosidades]
+        default: desafios
       forcar:
-        description: "Publicar mesmo se ja houve post nas ultimas 18h"
+        description: "Publicar mesmo se ja houve post da serie nas ultimas 18h"
         type: boolean
         default: false
 
@@ -35,6 +42,20 @@ jobs:
 
       - uses: actions/checkout@v5
         if: steps.cfg.outputs.ok == 'true'
+        with:
+          fetch-depth: 2
+
+      - name: Escolher a serie
+        if: steps.cfg.outputs.ok == 'true'
+        env:
+          SERIE_INPUT: ${{ inputs.serie }}
+          CRON: ${{ github.event.schedule }}
+        run: |
+          SERIE="$SERIE_INPUT"
+          if [ -z "$SERIE" ] && [ "$CRON" = "43 14 * * *" ]; then SERIE=curiosidades; fi
+          if [ -z "$SERIE" ] && [ "${{ github.event_name }}" = "push" ] && git diff --name-only HEAD~1 HEAD | grep -q publicar_curiosidade_agora; then SERIE=curiosidades; fi
+          echo "SERIE=${SERIE:-desafios}" >> $GITHUB_ENV
+          echo "serie: ${SERIE:-desafios}"
 
       - uses: actions/setup-python@v6
         if: steps.cfg.outputs.ok == 'true'
@@ -57,7 +78,7 @@ jobs:
           git config user.name "quebra-cuca-bot"
           git config user.email "quebra-cuca-bot@users.noreply.github.com"
           git add docs estado.json
-          git diff --cached --quiet || git commit -m "Gera proximo desafio"
+          git diff --cached --quiet || git commit -m "Gera proximo post"
           git push
 
       - name: Publicar no Instagram
@@ -85,5 +106,5 @@ jobs:
         if: always() && steps.cfg.outputs.ok == 'true'
         run: |
           git add estado.json docs diagnostico
-          git diff --cached --quiet || git commit -m "Publica desafio"
+          git diff --cached --quiet || git commit -m "Publica $SERIE"
           git pull --rebase -q && git push

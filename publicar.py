@@ -34,7 +34,10 @@ def falha(msg):
 
 RAIZ = os.path.dirname(os.path.abspath(__file__))
 ESTADO = os.path.join(RAIZ, "estado.json")
-MIDIA = os.path.join(RAIZ, "docs", "media")
+SERIE = os.environ.get("SERIE", "").strip() or "desafios"   # desafios (18:47) ou curiosidades (11:43)
+SUBPASTA = {"desafios": "media", "curiosidades": "curiosidades"}[SERIE]
+MIDIA = os.path.join(RAIZ, "docs", SUBPASTA)
+CHAVE_PROXIMO = {"desafios": "proximo", "curiosidades": "proximo_curiosidades"}[SERIE]
 IG_USER_ID = os.environ.get("IG_USER_ID", "").strip()
 API = "https://graph.facebook.com/v25.0" if IG_USER_ID else "https://graph.instagram.com"
 
@@ -76,11 +79,13 @@ def conta():
 # ---------------------------------------------------------------- preparar
 def preparar():
     e = carrega_estado()
-    num = e["proximo"]
+    num = e.get(CHAVE_PROXIMO, 1)
     pasta = os.path.join(MIDIA, f"{num:03d}")
     if os.path.exists(os.path.join(pasta, "post.json")):
-        print(f"post #{num:03d} ja existe na fila")
+        print(f"{SERIE} #{num:03d} ja existe na fila")
         return
+    if SERIE == "curiosidades":
+        falha(f"fila de curiosidades vazia (falta docs/curiosidades/{num:03d}); a tarefa semanal precisa gerar novas")
     sys.path.insert(0, RAIZ)
     import gerador
     item = gerador.gera_um(num, MIDIA)
@@ -119,10 +124,10 @@ def espera_container(cid, limite=600):
 
 
 def ja_publicou_recentemente(e, horas=18):
-    """Evita post duplicado quando o horario de reserva roda depois do principal."""
+    """Evita post duplicado da mesma serie (desafios ou curiosidades) em menos de `horas`."""
     from datetime import datetime, timezone
     for p in reversed(e["publicados"]):
-        if p.get("via") == "api":
+        if p.get("via") == "api" and p.get("serie", "desafios") == SERIE:
             quando = datetime.strptime(p["quando"], "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
             return (datetime.now(timezone.utc) - quando).total_seconds() < horas * 3600
     return False
@@ -136,11 +141,11 @@ def publicar():
     if not base:
         falha("MEDIA_BASE_URL nao definido")
     e = carrega_estado()
-    num = e["proximo"]
+    num = e.get(CHAVE_PROXIMO, 1)
     pasta = os.path.join(MIDIA, f"{num:03d}")
     with open(os.path.join(pasta, "post.json")) as fh:
         post = json.load(fh)
-    urls = [f"{base}/media/{num:03d}/{a}" for a in post["arquivos"]]
+    urls = [f"{base}/{SUBPASTA}/{num:03d}/{a}" for a in post["arquivos"]]
     for u in urls:
         espera_url(u)
     ig = conta()["user_id"]
@@ -161,11 +166,11 @@ def publicar():
 
     mid = chama("POST", f"{ig}/media_publish", creation_id=c)["id"]
     link = chama("GET", mid, fields="permalink").get("permalink", "")
-    e["publicados"].append(dict(num=num, tipo=post["tipo"], media_id=mid, link=link,
+    e["publicados"].append(dict(num=num, serie=SERIE, tipo=post["tipo"], media_id=mid, link=link,
                                 quando=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), via="api"))
-    e["proximo"] = num + 1
+    e[CHAVE_PROXIMO] = num + 1
     salva_estado(e)
-    print(f"publicado #{num:03d}: {link}")
+    print(f"publicado {SERIE} #{num:03d}: {link}")
     limpa_antigos(num)
 
 
@@ -199,7 +204,8 @@ def renovar_token():
 def testar():
     c = conta()
     print(f"token ok - conta @{c.get('username')} (id {c.get('user_id')})")
-    print(f"proximo post: #{carrega_estado()['proximo']:03d}")
+    e = carrega_estado()
+    print(f"proximo desafio: #{e['proximo']:03d} | proxima curiosidade: #{e.get('proximo_curiosidades', 1):03d}")
 
 
 if __name__ == "__main__":

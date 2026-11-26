@@ -34,7 +34,7 @@ def main():
     for p in e["publicados"]:
         if not p.get("media_id"):
             continue
-        linha = {"num": p["num"], "quando": p["quando"], "link": p.get("link", "")}
+        linha = {"serie": p.get("serie", "desafios"), "num": p["num"], "quando": p["quando"], "link": p.get("link", "")}
         for m in METRICAS:
             v, erro = valor(p["media_id"], m)
             linha[m] = "" if v is None else v
@@ -43,7 +43,7 @@ def main():
         linhas.append(linha)
     os.makedirs(os.path.dirname(SAIDA), exist_ok=True)
     with open(SAIDA, "w", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=["num", "quando", "link"] + METRICAS)
+        w = csv.DictWriter(fh, fieldnames=["serie", "num", "quando", "link"] + METRICAS)
         w.writeheader()
         w.writerows(linhas)
     if avisos:

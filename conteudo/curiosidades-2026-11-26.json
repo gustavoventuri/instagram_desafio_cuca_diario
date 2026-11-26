@@ -1,0 +1,54 @@
+[
+  {
+    "emoji": "🍯",
+    "pergunta": "Existe comida que nunca estraga?",
+    "resposta": "Existe: o mel!",
+    "explicacao": [
+      "Arqueólogos já acharam potes de mel com milhares de anos em tumbas do Egito, ainda preservados.",
+      "O mel tem pouquíssima água e é bem ácido (pH entre 3 e 4,5).",
+      "Bactérias e fungos não conseguem sobreviver nele. Só estraga se entrar água."
+    ],
+    "fonte": "Smithsonian Magazine",
+    "fonte_url": "https://www.smithsonianmag.com/science-nature/the-science-behind-honeys-eternal-shelf-life-1218690/",
+    "legenda": "O mel guardado e bem fechado praticamente não estraga 🍯 Você sabia disso? Comenta \"sabia\" ou \"não sabia\" 👇"
+  },
+  {
+    "emoji": "🐙",
+    "pergunta": "Quantos corações tem um polvo?",
+    "resposta": "Três!",
+    "explicacao": [
+      "Dois corações bombeiam o sangue pelas brânquias, onde ele pega oxigênio.",
+      "O terceiro leva esse sangue para o resto do corpo.",
+      "E o sangue dele é azul: usa cobre (hemocianina) no lugar do ferro."
+    ],
+    "fonte": "National Geographic Education",
+    "fonte_url": "https://education.nationalgeographic.org/resource/animals-101-octopuses/",
+    "legenda": "Três corações e sangue azul 🐙 Marca alguém que precisa saber disso hoje 👇"
+  },
+  {
+    "emoji": "🍌",
+    "pergunta": "A banana é radioativa?",
+    "resposta": "É, sim (um pouquinho)!",
+    "explicacao": [
+      "Ela tem muito potássio, e uma parte minúscula dele é o potássio-40, que é radioativo.",
+      "Mas relaxa: você também tem potássio-40 no corpo.",
+      "Um adulto é cerca de 280 vezes mais radioativo que uma banana."
+    ],
+    "fonte": "BBC Science Focus",
+    "fonte_url": "https://www.sciencefocus.com/science/how-many-bananas-would-i-need-to-eat-to-become-radioactive/",
+    "legenda": "Você é mais radioativo que uma banana 🍌😅 Comenta se você vai continuar comendo banana 👇"
+  },
+  {
+    "emoji": "🗼",
+    "pergunta": "A Torre Eiffel muda de tamanho?",
+    "resposta": "Muda, com o calor!",
+    "explicacao": [
+      "O ferro dilata quando esquenta: é a dilatação térmica.",
+      "No verão, a torre fica alguns milímetros mais alta.",
+      "E o lado que pega sol dilata mais, então ela se inclina para longe do sol."
+    ],
+    "fonte": "Site oficial da Torre Eiffel",
+    "fonte_url": "https://www.toureiffel.paris/en/news/history-and-culture/why-does-eiffel-tower-change-size",
+    "legenda": "A Torre Eiffel cresce e se inclina com o sol 🗼☀️ Você sabia? Comenta 👇"
+  }
+]
