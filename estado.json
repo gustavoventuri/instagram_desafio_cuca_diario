@@ -1,5 +1,5 @@
 {
-  "proximo": 6,
+  "proximo": 7,
   "publicados": [
     {
       "num": 1,
@@ -46,6 +46,15 @@
       "media_id": "18421999885083862",
       "link": "https://www.instagram.com/reel/DgNWtodhSTK/",
       "quando": "2026-11-26T14:48:32Z",
+      "via": "api"
+    },
+    {
+      "num": 6,
+      "serie": "desafios",
+      "tipo": "reel",
+      "media_id": "18239807734317741",
+      "link": "https://www.instagram.com/reel/DgOHBbItkMs/",
+      "quando": "2026-11-26T21:50:41Z",
       "via": "api"
     }
   ],
