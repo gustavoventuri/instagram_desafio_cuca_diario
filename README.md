@@ -56,7 +56,10 @@ Todo domingo às 16:41, uma tarefa agendada do Claude:
 
 **Aprovar = fazer o merge do Pull Request.** O robô só publica o que está na `main`. Se a semana não for aprovada, nada novo é publicado: a série para e o motivo fica em `diagnostico/ultimo_erro.txt`. Para o robô voltar a gerar desafios sozinho, sem aprovação, crie a variável `AUTO_GERAR=true`.
 
-## YouTube Shorts (17:13)
+## YouTube Shorts
+
+Os Shorts são publicados **manualmente pelo Gustavo** no YouTube Studio: baixe `docs/shorts/NNN/short.mp4` e use o título e a descrição de `post.json`. O envio automático abaixo fica desligado.
+
 
 - `shorts.py` junta uma abertura, a curiosidade do dia, o desafio do dia, um desafio bônus e o encerramento, somando cerca de 1 minuto. O resultado fica em `docs/shorts/NNN/`.
 - `youtube.py` envia os Shorts pela YouTube Data API. Precisa dos segredos `YT_CLIENT_ID`, `YT_CLIENT_SECRET` e `YT_REFRESH_TOKEN`.
