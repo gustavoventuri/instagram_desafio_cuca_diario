@@ -45,3 +45,19 @@ cd ~/quebracuca && node responder.js --agora   # teste
 tmux new-session -d -s quebracuca ~/quebracuca/laco.sh
 ```
 O log fica em `~/quebracuca/respostas.log`.
+
+## Rotina semanal com aprovação
+
+Todo domingo às 16:41, uma tarefa agendada do Claude:
+
+1. analisa `diagnostico/metricas.csv` (views, tempo médio assistido e interações por série e por tipo de desafio) e ajusta o gerador quando os números mostram um caminho melhor;
+2. pesquisa e confere 7 curiosidades (`conteudo/curiosidades-*.json`), gera 7 desafios e monta 7 Shorts de cerca de 1 minuto;
+3. abre um **Pull Request** `semana-AAAA-MM-DD` com prévias de cada vídeo e o relatório da semana.
+
+**Aprovar = fazer o merge do Pull Request.** O robô só publica o que está na `main`. Se a semana não for aprovada, nada novo é publicado: a série para e o motivo fica em `diagnostico/ultimo_erro.txt`. Para o robô voltar a gerar desafios sozinho, sem aprovação, crie a variável `AUTO_GERAR=true`.
+
+## YouTube Shorts (17:13)
+
+- `shorts.py` junta uma abertura, a curiosidade do dia, o desafio do dia, um desafio bônus e o encerramento, somando cerca de 1 minuto. O resultado fica em `docs/shorts/NNN/`.
+- `youtube.py` envia os Shorts pela YouTube Data API. Precisa dos segredos `YT_CLIENT_ID`, `YT_CLIENT_SECRET` e `YT_REFRESH_TOKEN`.
+- Projetos do Google Cloud não auditados só conseguem enviar vídeos **privados**. Enquanto a auditoria não for aprovada, publique os Shorts pelo YouTube Studio. Depois da aprovação, crie a variável `YT_PRIVACIDADE=public`.

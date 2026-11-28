@@ -18,12 +18,13 @@ W, H, FPS = 1080, 1920, 30
 ROXO_FORTE = (120, 60, 230)
 CINZA = (110, 100, 150)
 CARD = (60, 430, 1020, 1540)
+ROTULO_FIXO = None  # ex.: "BÔNUS" nos Shorts, no lugar de "DESAFIO #NNN"
 
 
 # ---------------------------------------------------------------- base comum
 def cabecalho(img, num, titulo, subtitulo):
     d = ImageDraw.Draw(img)
-    pilula(d, 540, 100, f"DESAFIO #{num:03d}", fonte("Black", 44))
+    pilula(d, 540, 100, ROTULO_FIXO or f"DESAFIO #{num:03d}", fonte("Black", 44))
     f = fonte("Black", 96)
     while d.textlength(titulo, font=f) > 980:
         f = fonte("Black", f.size - 4)

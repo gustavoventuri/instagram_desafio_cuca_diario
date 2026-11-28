@@ -35,9 +35,9 @@ def falha(msg):
 RAIZ = os.path.dirname(os.path.abspath(__file__))
 ESTADO = os.path.join(RAIZ, "estado.json")
 SERIE = os.environ.get("SERIE", "").strip() or "desafios"   # desafios (18:47) ou curiosidades (11:43)
-SUBPASTA = {"desafios": "media", "curiosidades": "curiosidades"}[SERIE]
+SUBPASTA = {"desafios": "media", "curiosidades": "curiosidades", "youtube": "shorts"}[SERIE]
 MIDIA = os.path.join(RAIZ, "docs", SUBPASTA)
-CHAVE_PROXIMO = {"desafios": "proximo", "curiosidades": "proximo_curiosidades"}[SERIE]
+CHAVE_PROXIMO = {"desafios": "proximo", "curiosidades": "proximo_curiosidades", "youtube": "proximo_shorts"}[SERIE]
 IG_USER_ID = os.environ.get("IG_USER_ID", "").strip()
 API = "https://graph.facebook.com/v25.0" if IG_USER_ID else "https://graph.instagram.com"
 
@@ -195,7 +195,8 @@ def publicar():
 
     mid = chama("POST", f"{ig}/media_publish", creation_id=c)["id"]
     link = chama("GET", mid, fields="permalink").get("permalink", "")
-    e["publicados"].append(dict(num=num, serie=SERIE, tipo=post["tipo"], media_id=mid, link=link,
+    e["publicados"].append(dict(num=num, serie=SERIE, tipo=post["tipo"], desafio=post.get("desafio", SERIE),
+                                media_id=mid, link=link,
                                 quando=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), via="api"))
     e[CHAVE_PROXIMO] = num + 1
     salva_estado(e)

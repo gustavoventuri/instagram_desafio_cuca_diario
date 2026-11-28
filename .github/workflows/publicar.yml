@@ -9,12 +9,13 @@ on:
     paths:
       - "diagnostico/publicar_agora.txt"              # desafio, disparado por commit
       - "diagnostico/publicar_curiosidade_agora.txt"  # curiosidade, disparada por commit
+      - "diagnostico/publicar_short_agora.txt"        # Short do YouTube, disparado por commit
   workflow_dispatch:
     inputs:
       serie:
         description: "Qual serie publicar"
         type: choice
-        options: [desafios, curiosidades]
+        options: [desafios, curiosidades, youtube]
         default: desafios
       forcar:
         description: "Publicar mesmo se ja houve post da serie nas ultimas 18h"
@@ -54,6 +55,7 @@ jobs:
           SERIE="$SERIE_INPUT"
           if [ -z "$SERIE" ] && [ "$CRON" = "43 14 * * *" ]; then SERIE=curiosidades; fi
           if [ -z "$SERIE" ] && [ "${{ github.event_name }}" = "push" ] && git diff --name-only HEAD~1 HEAD | grep -q publicar_curiosidade_agora; then SERIE=curiosidades; fi
+          if [ -z "$SERIE" ] && [ "${{ github.event_name }}" = "push" ] && git diff --name-only HEAD~1 HEAD | grep -q publicar_short_agora; then SERIE=youtube; fi
           echo "SERIE=${SERIE:-desafios}" >> $GITHUB_ENV
           echo "serie: ${SERIE:-desafios}"
 
@@ -68,8 +70,10 @@ jobs:
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           pip install -q -r requirements.txt
 
-      - name: Gerar o proximo desafio (se a fila estiver vazia)
-        if: steps.cfg.outputs.ok == 'true'
+      - name: Conferir a fila (posts aprovados)
+        if: steps.cfg.outputs.ok == 'true' && env.SERIE != 'youtube'
+        env:
+          AUTO_GERAR: ${{ vars.AUTO_GERAR }}
         run: python publicar.py preparar
 
       - name: Salvar o desafio no repositorio
@@ -89,10 +93,14 @@ jobs:
           EVENTO: ${{ github.event_name }}
           FORCAR: ${{ inputs.forcar }}
           MEDIA_BASE_URL: ${{ vars.MEDIA_BASE_URL }}
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          YT_PRIVACIDADE: ${{ vars.YT_PRIVACIDADE }}
         run: |
           # midias servidas pelo jsDelivr direto do repositorio publico, fixadas no commit atual
           if [ -z "$MEDIA_BASE_URL" ]; then export MEDIA_BASE_URL="https://cdn.jsdelivr.net/gh/${GITHUB_REPOSITORY}@$(git rev-parse HEAD)/docs"; fi
-          python publicar.py publicar
+          if [ "$SERIE" = "youtube" ]; then python youtube.py; else python publicar.py publicar; fi
 
       - name: Atualizar estatisticas
         if: always() && steps.cfg.outputs.ok == 'true'

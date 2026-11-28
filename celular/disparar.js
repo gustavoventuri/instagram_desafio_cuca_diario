@@ -1,6 +1,6 @@
 // Dispara as publicacoes diarias no GitHub Actions a partir do celular (o agendamento do GitHub nao e confiavel).
 // Chamado pelo laco a cada 10 min. Cada serie dispara uma vez por dia, a partir do seu horario (Brasilia):
-//   HORARIOS=11:43=curiosidades,18:47=desafios   (padrao)
+//   HORARIOS=11:43=curiosidades,17:13=youtube,18:47=desafios   (padrao)
 // O workflow so publica se nao houve post da mesma serie nas ultimas 18h, entao disparo repetido nao duplica post.
 'use strict'
 const fs = require('fs')
@@ -14,7 +14,7 @@ const cfg = k => process.env[k] || ENV[k] || ''
 
 const GH_TOKEN = cfg('GH_TOKEN')
 const REPO = cfg('GH_REPO') || 'gustavoventuri/instagram_desafio_cuca_diario'
-const HORARIOS = (cfg('HORARIOS') || '11:43=curiosidades,18:47=desafios')
+const HORARIOS = (cfg('HORARIOS') || '11:43=curiosidades,17:13=youtube,18:47=desafios')
   .split(',').map(x => x.trim().split('=')).filter(x => x.length === 2)
 const marca = serie => path.join(DIR, `.ultimo_disparo_${serie}`)
 
